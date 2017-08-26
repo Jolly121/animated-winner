@@ -83,9 +83,9 @@ namespace coin_crop
             morphCloseKernel = CvUtils.Ones(morphCloseKernelSize);
         }
 
-        public Image<Bgra, byte> ProcessImg(Image<Bgra, byte> img)
+        public Image<Bgra, float> ProcessImg(Image<Bgra, float> img)
         {
-            Image<Bgra, byte> maskBgra;
+            Image<Bgra, float> maskBgra;
             VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
             Image<Gray, byte> mask, maskTemp;
             VectorOfPoint largestContour;
@@ -95,14 +95,16 @@ namespace coin_crop
                CvInvoke.Resize(img, img, new System.Drawing.Size(0, 0), fx: shrink, fy: shrink);
             
             mask = new Image<Gray, byte>(img.Width, img.Height, new Gray(255));
-            maskBgra = new Image<Bgra, byte>(img.Width, img.Height, new Bgra(0, 0, 0, 0));
+            maskBgra = new Image<Bgra, float>(img.Width, img.Height, new Bgra(0, 0, 0, 0));
+
 
             CvInvoke.CvtColor(img, mask, ColorConversion.Bgra2Gray);
-            
+            CvInvoke.Imwrite(@"C:\Users\aertho\Desktop\mask.tif", mask);
+
             if (!inverseThreshold)
-                CvInvoke.Threshold(mask, mask, threshLevel, 255, ThresholdType.Binary);
+                CvInvoke.Threshold(mask, mask, threshLevel, Byte.MaxValue, ThresholdType.Binary);
             else
-                CvInvoke.Threshold(mask, mask, threshLevel, 255, ThresholdType.BinaryInv);
+                CvInvoke.Threshold(mask, mask, threshLevel, Byte.MaxValue, ThresholdType.BinaryInv);
 
             if (useMorphOpen)
                 CvInvoke.MorphologyEx(mask, mask, MorphOp.Open, morphOpenKernel, new System.Drawing.Point(), 0, BorderType.Constant, new MCvScalar());
@@ -136,17 +138,10 @@ namespace coin_crop
             return img;
         }
 
-        public Image<Bgra, byte> ProcessImg(string imgPath)
+        public Image<Bgra, float> ProcessImg(string imgPath)
         {
-            Image<Bgra, byte> img = CvInvoke.Imread(imgPath, LoadImageType.AnyColor).ToImage<Bgra, byte>();
+            Image<Bgra, float> img = CvInvoke.Imread(imgPath, LoadImageType.AnyColor).ToImage<Bgra, float>();
             return ProcessImg(img);
-        }
-
-
-        private Mat CropImage(Mat img)
-        {
-
-            return img;
         }
     }
 }

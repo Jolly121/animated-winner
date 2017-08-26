@@ -25,7 +25,7 @@ namespace coin_crop
     public partial class MainWindow : Window
     {
         CoinCropModule cc = new CoinCropModule();
-        string filePath = @"C:\Users\Jackson\Pictures\images\img_black_background\218b.tif";
+        string filePath = ""; //@"C:\Users\Jackson\Pictures\images\img_black_background\218b.tif";
         string fileName = "";
         string folderPath = "";
         
@@ -33,7 +33,6 @@ namespace coin_crop
         public MainWindow()
         {
             InitializeComponent();
-            imgWindow.Source = CvUtils.ToBitmapSource(cc.ProcessImg(filePath).Mat);
         }
 
         private void ButtonOpenFile_Click(object sender, RoutedEventArgs e)
