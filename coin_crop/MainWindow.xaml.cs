@@ -25,7 +25,7 @@ namespace coin_crop
     {
         public MainWindow()
         {
-            string filePath = @"C:\Users\Jackson\Pictures\images\img_black_background\218b.tif";
+            string filePath = @"C:\Users\aertho\PycharmProjects\coincrop\images\black_background\218b.tif";
             InitializeComponent();
             CoinCropModule cc = new CoinCropModule();
 

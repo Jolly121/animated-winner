@@ -55,31 +55,26 @@ namespace coin_crop
            
         }
 
-        public Image<Rgb, byte> ProcessImg(Image<Rgb, byte> img)
+        public Image<Bgra, byte> ProcessImg(Image<Bgra, byte> img)
         {
-            Image<Rgb, byte> maskRgb;
+            Image<Bgra, byte> maskBgra;
             VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
             Image<Gray, byte> mask, maskTemp;
-            int largestContourIndex = 0;
+            VectorOfPoint largestContour;
+            System.Drawing.Rectangle croppingRectangle;
 
-            
-            // Mat mask = new Mat(img.Height, img.Width, DepthType.Default, 3);
-
-
-            //if (shrink != 1)
-               // CvInvoke.Resize(img, img, new System.Drawing.Size(0, 0), fx: shrink, fy: shrink);
+            if (shrink != 1)
+               CvInvoke.Resize(img, img, new System.Drawing.Size(0, 0), fx: shrink, fy: shrink);
             
             mask = new Image<Gray, byte>(img.Width, img.Height, new Gray(255));
-            maskRgb = new Image<Rgb, byte>(img.Width, img.Height, new Rgb(255, 255, 255));
+            maskBgra = new Image<Bgra, byte>(img.Width, img.Height, new Bgra(0, 0, 0, 0));
 
-            CvInvoke.CvtColor(img, mask, ColorConversion.Bgr2Gray);
+            CvInvoke.CvtColor(img, mask, ColorConversion.Bgra2Gray);
             
             if (!inverseThreshold)
                 CvInvoke.Threshold(mask, mask, threshLevel, 255, ThresholdType.Binary);
             else
                 CvInvoke.Threshold(mask, mask, threshLevel, 255, ThresholdType.BinaryInv);
-
-            
 
             if (useMorphOpen)
                 CvInvoke.MorphologyEx(mask, mask, MorphOp.Open, morphOpenKernel, new System.Drawing.Point(), 0, BorderType.Constant, new MCvScalar());
@@ -87,43 +82,35 @@ namespace coin_crop
             if (useMorphClose)
                 CvInvoke.MorphologyEx(mask, mask, MorphOp.Open, morphCloseKernel, new System.Drawing.Point(), 0, BorderType.Constant, new MCvScalar());
 
-            
-
             maskTemp = mask.Clone();
-            
-        
 
             CvInvoke.FindContours(maskTemp, contours, null, RetrType.List, ChainApproxMethod.ChainApproxSimple);
-            largestContourIndex = CvUtils.BiggestContour(contours);
+            largestContour = CvUtils.BiggestContour(contours);
+            croppingRectangle = CvInvoke.BoundingRectangle(largestContour);
 
-           
-            //CvInvoke.DrawContours(maskTemp, contours, largestContourIndex, new MCvScalar(255), thickness: 10);
-            
-
-            
-            
             if (useFindContours)
             {
-                mask = new Image<Gray, byte>(img.Width, img.Height, new Gray(255));
-                mask.Draw(contours[largestContourIndex].ToArray(), new Gray(0), -1);
-                CvInvoke.Imshow("mt", mask);
-                //img_mod = mask;
+                if (useContourApprox)
+                {
+                    double epsillon = contourApproxConstant * CvInvoke.ArcLength(largestContour, true);
+                    CvInvoke.ApproxPolyDP(largestContour, largestContour, epsillon, true);
+                }
+                maskBgra.Draw(largestContour.ToArray(), new Bgra(255,255,255,255), -1);
             }
-            
-            CvInvoke.CvtColor(mask, maskRgb, ColorConversion.Gray2Bgr);
-            
-            CvInvoke.Add(img, maskRgb, img);
-            CvInvoke.Imshow("img", img);
+            else
+            {
+                CvInvoke.CvtColor(mask, maskBgra, ColorConversion.Gray2Bgra); // might not create transparent background
+            }
 
-
+            CvInvoke.BitwiseAnd(img, maskBgra, img);
+            img.ROI = croppingRectangle;
 
             return img;
         }
 
-        public Image<Rgb, byte> ProcessImg(string imgPath)
+        public Image<Bgra, byte> ProcessImg(string imgPath)
         {
-            Image<Rgb, byte> img = CvInvoke.Imread(imgPath, LoadImageType.AnyColor).ToImage<Rgb, byte>();
-            
+            Image<Bgra, byte> img = CvInvoke.Imread(imgPath, LoadImageType.AnyColor).ToImage<Bgra, byte>();
             return ProcessImg(img);
         }
 
