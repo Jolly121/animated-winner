@@ -25,7 +25,7 @@ namespace coin_crop
 
 
 
-        static public int BiggestContour(VectorOfVectorOfPoint contours)
+        static public VectorOfPoint BiggestContour(VectorOfVectorOfPoint contours)
         {
             int largestContourIndex = 0;
             double largestArea = 0;
@@ -39,7 +39,7 @@ namespace coin_crop
                 }
 
             }
-            return largestContourIndex;
+            return contours[largestContourIndex];
         }
 
         [DllImport("gdi32")]
