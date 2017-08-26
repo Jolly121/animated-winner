@@ -30,7 +30,7 @@ namespace coin_crop
             CoinCropModule cc = new CoinCropModule();
 
 
-            imgWindow.Source = CvUtils.ToBitmapSource(cc.ProcessImg(filePath));
+            imgWindow.Source = CvUtils.ToBitmapSource(cc.ProcessImg(filePath).Mat);
                 
             //cc.ProcessImg(filePath);
             

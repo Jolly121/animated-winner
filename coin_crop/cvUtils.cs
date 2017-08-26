@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using Emgu.CV.Util;
 
 namespace coin_crop
 {
@@ -20,6 +21,25 @@ namespace coin_crop
                     output.Data[i, j] = 1;
 
             return output;
+        }
+
+
+
+        static public int BiggestContour(VectorOfVectorOfPoint contours)
+        {
+            int largestContourIndex = 0;
+            double largestArea = 0;
+            for (int i = 0; i < contours.Size; i++)
+            {
+                double a = CvInvoke.ContourArea(contours[i], false);  //  Find the area of contour
+                if (a > largestArea)
+                {
+                    largestArea = a;
+                    largestContourIndex = i;                //Store the index of largest contour
+                }
+
+            }
+            return largestContourIndex;
         }
 
         [DllImport("gdi32")]
@@ -42,7 +62,6 @@ namespace coin_crop
                 return bs;
             }
         }
-
 
     }
 }
