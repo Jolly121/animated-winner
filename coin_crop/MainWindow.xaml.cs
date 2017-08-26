@@ -12,6 +12,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Runtime.InteropServices;
+
+using Emgu.CV;
 
 namespace coin_crop
 {
@@ -22,7 +25,15 @@ namespace coin_crop
     {
         public MainWindow()
         {
+            string filePath = @"C:\Users\Jackson\Pictures\images\img_black_background\218b.tif";
             InitializeComponent();
+            CoinCropModule cc = new CoinCropModule();
+
+
+            imgWindow.Source = CvUtils.ToBitmapSource(cc.ProcessImg(filePath));
+                
+            //cc.ProcessImg(filePath);
+            
         }
     }
 }
