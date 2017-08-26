@@ -55,6 +55,36 @@ namespace coin_crop
            
         }
 
+        public void UpdateCoinCropModule(
+            bool uMC,
+            bool uMO,
+            bool uCA,
+            bool uFC,
+            bool iTH,
+            double cAC,
+            int tL,
+            int mOKS,
+            int mCKS,
+            int sh
+            )
+        {
+            useMorphClose = uMC;
+            useMorphOpen = uMO;
+            useContourApprox = uCA;
+            useFindContours = uFC;
+            inverseThreshold = iTH;
+
+            contourApproxConstant = cAC;
+            threshLevel = tL;
+            morphCloseKernelSize = mOKS;
+            morphOpenKernelSize = mCKS;
+            shrink = sh;
+
+            morphOpenKernel = CvUtils.Ones(morphOpenKernelSize);
+            morphCloseKernel = CvUtils.Ones(morphCloseKernelSize);
+        }
+
+
         public Image<Rgb, byte> ProcessImg(Image<Rgb, byte> img)
         {
             Image<Rgb, byte> maskRgb;
