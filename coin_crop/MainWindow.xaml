@@ -5,18 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:coin_crop"
         mc:Ignorable="d"
-        Title="MainWindow" Height="{Binding SystemParameters.PrimaryScreenHeight}" Width="{Binding SystemParameters.PrimaryScreenWidth}">
+        Title="MainWindow" Height="{Binding SystemParameters.PrimaryScreenHeight}" Width="{Binding SystemParameters.PrimaryScreenWidth}" Background="#FFDDE9FF">
 
     <Grid HorizontalAlignment="Stretch"   VerticalAlignment="Stretch" >
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="5*"/>
             <RowDefinition Height="2*" />
         </Grid.RowDefinitions>
-        <Image x:Name="imgWindow"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1" Grid.Row="0"/>
+        <Image x:Name="imgWindow"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Margin="20"/>
         <StackPanel>
             <Label Content="Coin Crop" HorizontalAlignment="Center" Margin="10,10,0,0" VerticalAlignment="Top" FontSize="18"/>
             <CheckBox x:Name="cbUseMorphOpen" Content="Use Morph Open" Margin="20,5" IsChecked="True" />
@@ -41,18 +41,14 @@
                 <Label Content="MphCl. Kernel Size:" Width="150"/>
                 <TextBox x:Name="tbMorphCloseKernelSize"  Height="23" TextWrapping="Wrap" Text="10"  />
             </DockPanel>
-            <DockPanel Margin="20,5">
-                <Label Content="Shrink:" Width="150"/>
-                <TextBox x:Name="tbShrink"  Height="23" TextWrapping="Wrap" Text="1.0"  />
-            </DockPanel>
-
+            
 
 
         </StackPanel>
         <DockPanel Margin="20,5" Grid.Column="0" Grid.Row="1" VerticalAlignment="Top">
             <Button Content="Open File" Margin="10" Padding="10,5" Click="ButtonOpenFile_Click"/>
-            <TextBox x:Name="tbFilePath"  Height="23" TextWrapping="Wrap" />
+            <TextBox x:Name="tbFilePath"  Height="23"/>
         </DockPanel>
-        <Button x:Name="bStart"  Content="Start!" HorizontalAlignment="Center" Margin="15" Grid.Row="1" VerticalAlignment="Bottom" Width="132" Height="40" Background="#FFC8F1C6" Click="bStart_Click"/>
+        <Button x:Name="bStart"  Content="Start!" HorizontalAlignment="Center" Margin="15" Grid.Row="1" VerticalAlignment="Bottom" Width="132" Height="40" Background="#FFC8F1C6" Click="bStart_Click" FontSize="16"/>
     </Grid>
 </Window>

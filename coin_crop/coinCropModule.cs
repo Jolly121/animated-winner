@@ -25,9 +25,6 @@ namespace coin_crop
         private int morphOpenKernelSize;    //Size of the morph Kernel
         private int morphCloseKernelSize;
 
-        private double shrink;
-
-
         private Matrix<double> morphOpenKernel;
         private Matrix<double> morphCloseKernel;
         
@@ -47,14 +44,12 @@ namespace coin_crop
             morphCloseKernelSize = 10;
             morphOpenKernelSize = 10;
 
-            shrink = 1;
-
             morphOpenKernel = CvUtils.Ones(morphOpenKernelSize);
             morphCloseKernel = CvUtils.Ones(morphCloseKernelSize);
 
            
         }
-        public void UpdateCoinCropModule(
+        public void UpdateCCM(
             bool uMC,
             bool uMO,
             bool uCA,
@@ -63,8 +58,7 @@ namespace coin_crop
             double cAC,
             int tL,
             int mOKS,
-            int mCKS,
-            int sh
+            int mCKS
             )
         {
             useMorphClose = uMC;
@@ -77,7 +71,6 @@ namespace coin_crop
             threshLevel = tL;
             morphCloseKernelSize = mOKS;
             morphOpenKernelSize = mCKS;
-            shrink = sh;
 
             morphOpenKernel = CvUtils.Ones(morphOpenKernelSize);
             morphCloseKernel = CvUtils.Ones(morphCloseKernelSize);
@@ -90,9 +83,6 @@ namespace coin_crop
             Image<Gray, byte> mask, maskTemp;
             VectorOfPoint largestContour;
             System.Drawing.Rectangle croppingRectangle;
-
-            if (shrink != 1)
-               CvInvoke.Resize(img, img, new System.Drawing.Size(0, 0), fx: shrink, fy: shrink);
             
             mask = new Image<Gray, byte>(img.Width, img.Height, new Gray(255));
             maskBgra = new Image<Bgra, byte>(img.Width, img.Height, new Bgra(0, 0, 0, 0));
@@ -133,6 +123,7 @@ namespace coin_crop
             CvInvoke.BitwiseAnd(img, maskBgra, img);
             img.ROI = croppingRectangle;
 
+            CvInvoke.Imwrite(@"C:\Users\Jackson\Desktop\img.tif", img);
             return img;
         }
 

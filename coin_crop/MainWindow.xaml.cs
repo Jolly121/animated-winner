@@ -25,7 +25,7 @@ namespace coin_crop
     public partial class MainWindow : Window
     {
         CoinCropModule cc = new CoinCropModule();
-        string filePath = @"C:\Users\Jackson\Pictures\images\img_black_background\218b.tif";
+        string filePath = "";
         string fileName = "";
         string folderPath = "";
         
@@ -33,7 +33,6 @@ namespace coin_crop
         public MainWindow()
         {
             InitializeComponent();
-            imgWindow.Source = CvUtils.ToBitmapSource(cc.ProcessImg(filePath).Mat);
         }
 
         private void ButtonOpenFile_Click(object sender, RoutedEventArgs e)
@@ -52,8 +51,51 @@ namespace coin_crop
                 fileName = openDialog.SafeFileName;             //...Store just the name of the selected file...
                 folderPath = getContainingFolder(filePath);     //...Store the path of the folder the file is stored in...
                 tbFilePath.Text = filePath;
+                imgWindow.Source = CvUtils.ToBitmapSource(cc.ProcessImg(filePath).Mat);
             }            
         }
+
+        private void UpdateParameters()
+        {
+            bool uMC = (bool)cbUseMorphClose.IsChecked;
+            bool uMO = (bool)cbUseMorphOpen.IsChecked;
+            bool uCA = (bool)cbUseContorApprox.IsChecked;
+            bool uFC = (bool)cbUseFindContours.IsChecked;
+            bool iTH = (bool)cbInverseThreshold.IsChecked;
+            double cAC;
+            int tL;
+            int mOKS;
+            int mCKS;
+            double sh;
+
+            try
+            {
+                cAC = Convert.ToDouble(tbContourApprox.Text);
+                tL = Convert.ToInt32(tbThreshLevel.Text);
+                mOKS = Convert.ToInt32(tbMorphOpenKernelSize.Text);
+                mCKS = Convert.ToInt32(tbMorphCloseKernelSize.Text);
+                cc.UpdateCCM(
+                uMC,
+                uMO,
+                uCA,
+                uFC,
+                iTH,
+                cAC,
+                tL,
+                mOKS,
+                mCKS
+                );
+
+                imgWindow.Source = CvUtils.ToBitmapSource(cc.ProcessImg(filePath).Mat);
+            }
+            catch(Exception e)
+            {
+                //TODO
+                System.Windows.MessageBox.Show("Error - " + e.Message);
+            }
+            
+        }
+
 
         private string getContainingFolder(string filePath)
         {
@@ -71,7 +113,8 @@ namespace coin_crop
 
         private void bStart_Click(object sender, RoutedEventArgs e)
         {
-            imgWindow.Source = CvUtils.ToBitmapSource(cc.ProcessImg(filePath).Mat);
+            if (!String.IsNullOrEmpty(filePath))
+                UpdateParameters();
         }
 
     }
