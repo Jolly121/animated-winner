@@ -90,6 +90,7 @@ namespace coin_crop
         internal static double DetermineThreshold(Image<Gray, byte> img)
         {
             double threshhold = 0;
+            float smallest = float.MaxValue;
             Mat hist = new Mat();
             
             using (VectorOfMat vm = new VectorOfMat())
@@ -98,9 +99,13 @@ namespace coin_crop
                 float[] ranges = new float[] { 0.0f, 256.0f };
                 CvInvoke.CalcHist(vm, new int[] { 0 }, null, hist, new int[] { 256 }, ranges, false);
             }
-            while (Math.Abs(hist.GetValue(0, (int)threshhold + 1) - (hist.GetValue(0, (int)threshhold))) > 1000)
+            for (int i = 5;i < 50; ++i)
             {
-                threshhold += 1;
+                if (hist.GetValue(0,i) < smallest)
+                {
+                    smallest = hist.GetValue(0, i);
+                    threshhold = i;
+                }
             }
             return threshhold;
         }
