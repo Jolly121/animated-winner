@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Emgu.CV.Util;
+using Emgu.CV.Structure;
+using ImageMagick;
 
 namespace coin_crop
 {
@@ -63,5 +65,26 @@ namespace coin_crop
             }
         }
 
+        public static int SaveImage(IImage img, String path, String orgPath)
+        {
+            ImageProfile imageProfile;
+            CvInvoke.Imwrite(path, img);
+            try
+            {
+                using (MagickImage orgImage = new MagickImage(orgPath))
+                {
+                    imageProfile = orgImage.GetProfile("ICC");
+                }
+                using (MagickImage newImage = new MagickImage(path))
+                {
+                    newImage.AddProfile(imageProfile);
+                    newImage.Write(path);
+                }
+            } catch(MagickBlobErrorException)
+            {
+                throw new System.InvalidCastException("Cannot save file.");
+            }
+            return 0;
+        }
     }
 }

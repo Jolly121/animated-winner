@@ -19,6 +19,8 @@
         <Image x:Name="imgWindow"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Margin="20"/>
         <StackPanel>
             <Label Content="Coin Crop" HorizontalAlignment="Center" Margin="10,10,0,0" VerticalAlignment="Top" FontSize="18"/>
+            <CheckBox x:Name="cbUseGaussianFilter" Content="Use Gaussian Filter" Margin="20,5" IsChecked="True"/>
+            <CheckBox x:Name="cbUseErode" Content="Use Morph Erode" Margin="20,5" IsChecked="True"/>
             <CheckBox x:Name="cbUseMorphOpen" Content="Use Morph Open" Margin="20,5" IsChecked="True" />
             <CheckBox x:Name="cbUseMorphClose" Content="Use Morph Close" Margin="20,5" IsChecked="True"/>
             <CheckBox x:Name="cbUseFindContours" Content="Find Contours" Margin="20,5" IsChecked="True"/>
@@ -26,7 +28,7 @@
             <CheckBox x:Name="cbInverseThreshold" Content="Inverse Threshold" Margin="20,5" IsChecked="False"/>
             <DockPanel Margin="20,5">
                 <Label Content="Contour Approx Constant: " Width="150"/>
-                <TextBox x:Name="tbContourApprox"  Height="23" TextWrapping="Wrap" Text="0.000015"  />
+                <TextBox x:Name="tbContourApprox"  Height="23" TextWrapping="Wrap" Text="0.000015" TextChanged="tbContourApprox_TextChanged"  />
             </DockPanel>
             <DockPanel Margin="20,5">
                 <Label Content="Threshold Level:" Width="150"/>
@@ -35,13 +37,21 @@
             
             <DockPanel Margin="20,5">
                 <Label Content="MphOp. Kernel Size:" Width="150"/>
-                <TextBox x:Name="tbMorphOpenKernelSize"  Height="23" TextWrapping="Wrap" Text="10"  />
+                <TextBox x:Name="tbMorphOpenKernelSize"  Height="23" TextWrapping="Wrap" Text="23"  />
             </DockPanel>
             <DockPanel Margin="20,5">
                 <Label Content="MphCl. Kernel Size:" Width="150"/>
-                <TextBox x:Name="tbMorphCloseKernelSize"  Height="23" TextWrapping="Wrap" Text="10"  />
+                <TextBox x:Name="tbMorphCloseKernelSize"  Height="23" TextWrapping="Wrap" Text="23"  />
             </DockPanel>
-            
+            <DockPanel Margin="20,5">
+                <Label Content="Gauss Kernel Size:" Width="150"/>
+                <TextBox x:Name="tbGaussKernelSize"  Height="23" TextWrapping="Wrap" Text="23"  />
+            </DockPanel>
+            <DockPanel Margin="20,5">
+                <Label Content="Erode Kernel Size:" Width="150"/>
+                <TextBox x:Name="tbErodeKernelSize"  Height="23" TextWrapping="Wrap" Text="23"  />
+            </DockPanel>
+
 
 
         </StackPanel>

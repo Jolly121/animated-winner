@@ -62,11 +62,14 @@ namespace coin_crop
             bool uCA = (bool)cbUseContorApprox.IsChecked;
             bool uFC = (bool)cbUseFindContours.IsChecked;
             bool iTH = (bool)cbInverseThreshold.IsChecked;
+            bool uGF = (bool)cbUseGaussianFilter.IsChecked;
+            bool uME = (bool)cbUseErode.IsChecked;
             double cAC;
             int tL;
             int mOKS;
             int mCKS;
-            double sh;
+            int gFS;
+            int mEKS;
 
             try
             {
@@ -74,19 +77,23 @@ namespace coin_crop
                 tL = Convert.ToInt32(tbThreshLevel.Text);
                 mOKS = Convert.ToInt32(tbMorphOpenKernelSize.Text);
                 mCKS = Convert.ToInt32(tbMorphCloseKernelSize.Text);
+                gFS = Convert.ToInt32(tbGaussKernelSize.Text);
+                mEKS = Convert.ToInt32(tbErodeKernelSize.Text);
                 cc.UpdateCCM(
                 uMC,
                 uMO,
                 uCA,
                 uFC,
                 iTH,
+                uGF,
+                uME,
                 cAC,
                 tL,
                 mOKS,
-                mCKS
+                mCKS,
+                gFS,
+                mEKS
                 );
-
-                imgWindow.Source = CvUtils.ToBitmapSource(cc.ProcessImg(filePath).Mat);
             }
             catch(Exception e)
             {
@@ -113,9 +120,18 @@ namespace coin_crop
 
         private void bStart_Click(object sender, RoutedEventArgs e)
         {
-            if (!String.IsNullOrEmpty(filePath))
-                UpdateParameters();
+            IImage img;
+            if (String.IsNullOrEmpty(filePath))
+                return;
+            UpdateParameters();
+            img = cc.ProcessImg(filePath);
+            imgWindow.Source = CvUtils.ToBitmapSource(img);
+            CvUtils.SaveImage(img, @"C:\Users\aertho\Desktop\img.tiff", filePath);
         }
 
+        private void tbContourApprox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
     }
 }
