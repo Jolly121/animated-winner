@@ -82,9 +82,27 @@ namespace coin_crop
                 }
             } catch(MagickBlobErrorException)
             {
-                throw new System.InvalidCastException("Cannot save file.");
+                throw new System.Exception("Cannot save file.");
             }
             return 0;
+        }
+
+        internal static double DetermineThreshold(Image<Gray, byte> img)
+        {
+            double threshhold = 0;
+            Mat hist = new Mat();
+            
+            using (VectorOfMat vm = new VectorOfMat())
+            {
+                vm.Push(img.Mat);
+                float[] ranges = new float[] { 0.0f, 256.0f };
+                CvInvoke.CalcHist(vm, new int[] { 0 }, null, hist, new int[] { 256 }, ranges, false);
+            }
+            while (Math.Abs(hist.GetValue(0, (int)threshhold + 1) - (hist.GetValue(0, (int)threshhold))) > 1000)
+            {
+                threshhold += 1;
+            }
+            return threshhold;
         }
     }
 }

@@ -89,17 +89,19 @@ namespace coin_crop
             Image<Gray, byte> mask, maskTemp;
             VectorOfPoint largestContour;
             System.Drawing.Rectangle croppingRectangle;
-            
+
             mask = new Image<Gray, byte>(img.Width, img.Height, new Gray(255));
             maskBgra = new Image<Bgra, byte>(img.Width, img.Height, new Bgra(0, 0, 0, 0));
 
             CvInvoke.CvtColor(img, mask, ColorConversion.Bgra2Gray);
-            
+
             if (useGaussianFilter)
                 CvInvoke.GaussianBlur(mask, mask, new System.Drawing.Size(gaussianFilterSize, gaussianFilterSize), 0);
 
             if (!inverseThreshold)
-                CvInvoke.Threshold(mask, mask, threshLevel, Byte.MaxValue, ThresholdType.Binary);
+            {
+                CvInvoke.Threshold(mask, mask, CvUtils.DetermineThreshold(mask), Byte.MaxValue, ThresholdType.Binary);
+            }
             else
                 CvInvoke.Threshold(mask, mask, threshLevel, Byte.MaxValue, ThresholdType.BinaryInv);
 
@@ -120,7 +122,7 @@ namespace coin_crop
                     BorderType.Default, new MCvScalar());
 
             maskTemp = mask.Clone();
-            CvInvoke.FindContours(maskTemp, contours, null, RetrType.List, ChainApproxMethod.ChainApproxSimple);
+            CvInvoke.FindContours(maskTemp, contours, null, RetrType.List, ChainApproxMethod.ChainApproxNone);
             largestContour = CvUtils.BiggestContour(contours);
             croppingRectangle = CvInvoke.BoundingRectangle(largestContour);
 

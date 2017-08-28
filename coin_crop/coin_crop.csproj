@@ -88,6 +88,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Class1.cs" />
     <Compile Include="CoinCropModule.cs" />
     <Compile Include="CvUtils.cs" />
     <Compile Include="MainWindow.xaml.cs">
