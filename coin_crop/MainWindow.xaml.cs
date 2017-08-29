@@ -16,6 +16,8 @@ using System.Runtime.InteropServices;
 
 using Emgu.CV;
 using System.Windows.Forms;
+using Emgu.CV.Structure;
+using System.IO;
 
 namespace coin_crop
 {
@@ -28,6 +30,8 @@ namespace coin_crop
         string filePath = "";
         string fileName = "";
         string folderPath = "";
+        Image<Bgra, byte> currentImage;
+        int counter = 0;
         
 
         public MainWindow()
@@ -51,9 +55,23 @@ namespace coin_crop
                 fileName = openDialog.SafeFileName;             //...Store just the name of the selected file...
                 folderPath = getContainingFolder(filePath);     //...Store the path of the folder the file is stored in...
                 tbFilePath.Text = filePath;
-                imgWindow.Source = CvUtils.ToBitmapSource(cc.ProcessImg(filePath).Mat);
-            }            
+                ProcessAndDisplayImg();
+            }
         }
+
+        private void ProcessAndDisplayImg()
+        {
+            currentImage = cc.ProcessImg(filePath);
+            imgWindow.Source = CvUtils.ToBitmapSource(currentImage.Mat);
+        }
+
+        private void ProcessAndDisplayImg(string path)
+        {
+            currentImage = cc.ProcessImg(path);
+            imgWindow.Source = CvUtils.ToBitmapSource(currentImage.Mat);
+        }
+
+
 
         private void UpdateParameters()
         {
@@ -85,8 +103,7 @@ namespace coin_crop
                 mOKS,
                 mCKS
                 );
-
-                imgWindow.Source = CvUtils.ToBitmapSource(cc.ProcessImg(filePath).Mat);
+                ProcessAndDisplayImg();
             }
             catch(Exception e)
             {
@@ -117,5 +134,26 @@ namespace coin_crop
                 UpdateParameters();
         }
 
+        private void bSave_Click(object sender, RoutedEventArgs e)
+        {
+            //CvInvoke.Imshow("pic", currentImage);
+            CvInvoke.Imwrite(filePath + "_Copy.tif", currentImage);
+            counter++;
+        }
+
+        private void bProcessFolder_Click(object sender, RoutedEventArgs e)
+        {
+            if (!String.IsNullOrEmpty(filePath))
+            {
+                string[] fileList;
+                fileList = Directory.GetFiles(folderPath);
+                
+                foreach (string s in fileList)
+                {
+                    currentImage = cc.ProcessImg(s);
+                    CvInvoke.Imwrite(s + "_Copy.tif", currentImage);
+                }
+            }
+        }
     }
 }

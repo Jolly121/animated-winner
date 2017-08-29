@@ -7,6 +7,7 @@ using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Util;
 using Emgu.CV.Structure;
+using System.Drawing;
 
 namespace coin_crop
 {
@@ -25,8 +26,8 @@ namespace coin_crop
         private int morphOpenKernelSize;    //Size of the morph Kernel
         private int morphCloseKernelSize;
 
-        private Matrix<double> morphOpenKernel;
-        private Matrix<double> morphCloseKernel;
+        private Mat morphOpenKernel;
+        private Mat morphCloseKernel;
         
 
         public CoinCropModule()
@@ -44,10 +45,10 @@ namespace coin_crop
             morphCloseKernelSize = 10;
             morphOpenKernelSize = 10;
 
-            morphOpenKernel = CvUtils.Ones(morphOpenKernelSize);
-            morphCloseKernel = CvUtils.Ones(morphCloseKernelSize);
+            morphOpenKernel = CvInvoke.GetStructuringElement(ElementShape.Ellipse, new Size(morphOpenKernelSize, morphOpenKernelSize), new Point(-1, -1));
+            morphCloseKernel = CvInvoke.GetStructuringElement(ElementShape.Ellipse, new Size(morphCloseKernelSize, morphCloseKernelSize), new Point(-1, -1));
 
-           
+
         }
         public void UpdateCCM(
             bool uMC,
@@ -72,20 +73,20 @@ namespace coin_crop
             morphCloseKernelSize = mOKS;
             morphOpenKernelSize = mCKS;
 
-            morphOpenKernel = CvUtils.Ones(morphOpenKernelSize);
-            morphCloseKernel = CvUtils.Ones(morphCloseKernelSize);
+            morphOpenKernel = CvInvoke.GetStructuringElement(ElementShape.Ellipse, new Size(morphOpenKernelSize, morphOpenKernelSize), new Point(-1, -1));
+            morphCloseKernel = CvInvoke.GetStructuringElement(ElementShape.Ellipse, new Size(morphCloseKernelSize, morphCloseKernelSize), new Point(-1, -1));
         }
 
-        public Image<Bgra, float> ProcessImg(Image<Bgra, float> img)
+        public Image<Bgra, byte> ProcessImg(Image<Bgra, byte> img)
         {
-            Image<Bgra, float> maskBgra;
+            Image<Bgra, byte> maskBgra;
             VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
             Image<Gray, byte> mask, maskTemp;
             VectorOfPoint largestContour;
             System.Drawing.Rectangle croppingRectangle;
             
             mask = new Image<Gray, byte>(img.Width, img.Height, new Gray(255));
-            maskBgra = new Image<Bgra, float>(img.Width, img.Height, new Bgra(0, 0, 0, 0));
+            maskBgra = new Image<Bgra, byte>(img.Width, img.Height, new Bgra(0, 0, 0, 0));
 
 
             CvInvoke.CvtColor(img, mask, ColorConversion.Bgra2Gray);
@@ -97,10 +98,10 @@ namespace coin_crop
                 CvInvoke.Threshold(mask, mask, threshLevel, Byte.MaxValue, ThresholdType.BinaryInv);
 
             if (useMorphOpen)
-                CvInvoke.MorphologyEx(mask, mask, MorphOp.Open, morphOpenKernel, new System.Drawing.Point(), 0, BorderType.Constant, new MCvScalar());
+                CvInvoke.MorphologyEx(mask, mask, MorphOp.Open, morphOpenKernel, new System.Drawing.Point(-1, -1), 1, BorderType.Default, new MCvScalar());
 
             if (useMorphClose)
-                CvInvoke.MorphologyEx(mask, mask, MorphOp.Open, morphCloseKernel, new System.Drawing.Point(), 0, BorderType.Constant, new MCvScalar());
+                CvInvoke.MorphologyEx(mask, mask, MorphOp.Open, morphCloseKernel, new System.Drawing.Point(-1, -1), 1, BorderType.Default, new MCvScalar());
 
             maskTemp = mask.Clone();
 
@@ -129,9 +130,9 @@ namespace coin_crop
             return img;
         }
 
-        public Image<Bgra, float> ProcessImg(string imgPath)
+        public Image<Bgra, byte> ProcessImg(string imgPath)
         {
-            Image<Bgra, float> img = CvInvoke.Imread(imgPath, LoadImageType.AnyColor).ToImage<Bgra, float>();
+            Image<Bgra, byte> img = CvInvoke.Imread(imgPath, LoadImageType.AnyColor).ToImage<Bgra, byte>();
             return ProcessImg(img);
         }
     }
