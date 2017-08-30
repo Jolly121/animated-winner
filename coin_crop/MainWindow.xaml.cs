@@ -16,6 +16,8 @@ using System.Runtime.InteropServices;
 
 using Emgu.CV;
 using System.Windows.Forms;
+using Emgu.CV.Structure;
+using System.IO;
 
 namespace coin_crop
 {
@@ -28,6 +30,8 @@ namespace coin_crop
         string filePath = "";
         string fileName = "";
         string folderPath = "";
+        Image<Bgra, byte> currentImage;
+        int counter = 0;
         
 
         public MainWindow()
@@ -51,8 +55,14 @@ namespace coin_crop
                 fileName = openDialog.SafeFileName;             //...Store just the name of the selected file...
                 folderPath = getContainingFolder(filePath);     //...Store the path of the folder the file is stored in...
                 tbFilePath.Text = filePath;
-                imgWindow.Source = CvUtils.ToBitmapSource(cc.ProcessImg(filePath).Mat);
-            }            
+                ProcessAndDisplayImg();
+            }
+        }
+
+        private void ProcessAndDisplayImg()
+        {
+            currentImage = cc.ProcessImg(filePath);
+            imgWindow.Source = CvUtils.ToBitmapSource(currentImage.Mat);
         }
 
         private void UpdateParameters()
@@ -70,6 +80,7 @@ namespace coin_crop
             int mCKS;
             int gFS;
             int mEKS;
+            
 
             try
             {
@@ -94,6 +105,8 @@ namespace coin_crop
                 gFS,
                 mEKS
                 );
+
+                
             }
             catch(Exception e)
             {
@@ -128,9 +141,39 @@ namespace coin_crop
             imgWindow.Source = CvUtils.ToBitmapSource(img);
             CvUtils.SaveImage(img, @"C:\Users\aertho\Desktop\img.tiff", filePath);
         }
-
-        private void tbContourApprox_TextChanged(object sender, TextChangedEventArgs e)
+        private void bSave_Click(object sender, RoutedEventArgs e)
         {
+            //CvInvoke.Imshow("pic", currentImage);
+            CvInvoke.Imwrite(filePath + "_Copy.tif", currentImage);
+            counter++;
+        }
+
+        private void bProcessFolder_Click(object sender, RoutedEventArgs e)
+        {
+            if (!String.IsNullOrEmpty(filePath))
+            {
+                string[] fileList;
+                fileList = Directory.GetFiles(folderPath);
+
+                string newFolder = folderPath + "Processed\\";
+                System.IO.Directory.CreateDirectory(newFolder);
+
+                foreach (string s in fileList)
+                {
+                    getFileNameNoExt(s);
+                    CvInvoke.Imwrite(newFolder + getFileNameNoExt(s) + ".tif", cc.ProcessImg(s));
+                    counter++;
+                }
+                System.Windows.MessageBox.Show("Complete! " + counter + " files processed.");
+
+            }
+        }
+
+        private string getFileNameNoExt(string fullPath)
+        {
+            string[] folSplit;
+            folSplit = fullPath.Split('\\');
+            return folSplit[folSplit.Length - 1].Split('.')[0];
 
         }
     }
