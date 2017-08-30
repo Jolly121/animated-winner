@@ -75,6 +75,8 @@ namespace coin_crop
                 {
                     imageProfile = orgImage.GetProfile("ICC");
                 }
+                if (imageProfile == null)
+                    return 0;
                 using (MagickImage newImage = new MagickImage(path))
                 {
                     newImage.AddProfile(imageProfile);

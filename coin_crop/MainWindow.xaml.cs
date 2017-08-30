@@ -30,7 +30,6 @@ namespace coin_crop
         string filePath = "";
         string fileName = "";
         string folderPath = "";
-        Image<Bgra, byte> currentImage;
         int counter = 0;
         
 
@@ -61,7 +60,8 @@ namespace coin_crop
 
         private void ProcessAndDisplayImg()
         {
-            currentImage = cc.ProcessImg(filePath);
+            UpdateParameters();
+            var currentImage = cc.ProcessImg(filePath);
             imgWindow.Source = CvUtils.ToBitmapSource(currentImage.Mat);
         }
 
@@ -139,12 +139,11 @@ namespace coin_crop
             UpdateParameters();
             img = cc.ProcessImg(filePath);
             imgWindow.Source = CvUtils.ToBitmapSource(img);
-            CvUtils.SaveImage(img, @"C:\Users\aertho\Desktop\img.tiff", filePath);
         }
+
         private void bSave_Click(object sender, RoutedEventArgs e)
         {
-            //CvInvoke.Imshow("pic", currentImage);
-            CvInvoke.Imwrite(filePath + "_Copy.tif", currentImage);
+            CvUtils.SaveImage(cc.ProcessImg(filePath), filePath + "_Copy.tif", filePath);
             counter++;
         }
 
@@ -161,11 +160,10 @@ namespace coin_crop
                 foreach (string s in fileList)
                 {
                     getFileNameNoExt(s);
-                    CvInvoke.Imwrite(newFolder + getFileNameNoExt(s) + ".tif", cc.ProcessImg(s));
+                    CvUtils.SaveImage(cc.ProcessImg(s), newFolder + getFileNameNoExt(s) + ".tif", s);
                     counter++;
                 }
                 System.Windows.MessageBox.Show("Complete! " + counter + " files processed.");
-
             }
         }
 

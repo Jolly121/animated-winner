@@ -28,7 +28,7 @@
             <CheckBox x:Name="cbInverseThreshold" Content="Inverse Threshold" Margin="20,5" IsChecked="False"/>
             <DockPanel Margin="20,5">
                 <Label Content="Contour Approx Constant: " Width="150"/>
-                <TextBox x:Name="tbContourApprox"  Height="23" TextWrapping="Wrap" Text="0.000015" TextChanged="tbContourApprox_TextChanged"  />
+                <TextBox x:Name="tbContourApprox"  Height="23" TextWrapping="Wrap" Text="0.000015"/>
             </DockPanel>
             <DockPanel Margin="20,5">
                 <Label Content="Threshold Level:" Width="150"/>
