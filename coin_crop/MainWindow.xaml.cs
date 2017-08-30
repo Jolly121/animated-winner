@@ -65,14 +65,6 @@ namespace coin_crop
             imgWindow.Source = CvUtils.ToBitmapSource(currentImage.Mat);
         }
 
-        private void ProcessAndDisplayImg(string path)
-        {
-            currentImage = cc.ProcessImg(path);
-            imgWindow.Source = CvUtils.ToBitmapSource(currentImage.Mat);
-        }
-
-
-
         private void UpdateParameters()
         {
             bool uMC = (bool)cbUseMorphClose.IsChecked;
@@ -84,7 +76,6 @@ namespace coin_crop
             int tL;
             int mOKS;
             int mCKS;
-            double sh;
 
             try
             {
@@ -147,13 +138,27 @@ namespace coin_crop
             {
                 string[] fileList;
                 fileList = Directory.GetFiles(folderPath);
-                
+
+                string newFolder = folderPath + "Processed\\";
+                System.IO.Directory.CreateDirectory(newFolder);
+
                 foreach (string s in fileList)
                 {
-                    currentImage = cc.ProcessImg(s);
-                    CvInvoke.Imwrite(s + "_Copy.tif", currentImage);
+                    getFileNameNoExt(s);
+                    CvInvoke.Imwrite(newFolder + getFileNameNoExt(s) + ".tif", cc.ProcessImg(s));
+                    counter++;
                 }
+                System.Windows.MessageBox.Show("Complete! " + counter + " files processed.");
+
             }
+        }
+
+        private string getFileNameNoExt(string fullPath)
+        {
+            string[] folSplit;
+            folSplit = fullPath.Split('\\');
+            return folSplit[folSplit.Length -1].Split('.')[0];
+            
         }
     }
 }
