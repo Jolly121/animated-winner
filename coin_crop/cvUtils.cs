@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Emgu.CV.Util;
+using Emgu.CV.Structure;
+using ImageMagick;
 
 namespace coin_crop
 {
@@ -63,5 +65,44 @@ namespace coin_crop
             }
         }
 
+        public static int SaveImage(IImage img, String path, String orgPath)
+        {
+            ImageProfile imageProfile;
+            CvInvoke.Imwrite(path, img);
+            try
+            {
+                using (MagickImage orgImage = new MagickImage(orgPath))
+                {
+                    imageProfile = orgImage.GetProfile("ICC");
+                }
+                using (MagickImage newImage = new MagickImage(path))
+                {
+                    newImage.AddProfile(imageProfile);
+                    newImage.Write(path);
+                }
+            } catch(MagickBlobErrorException)
+            {
+                throw new System.Exception("Cannot save file.");
+            }
+            return 0;
+        }
+
+        internal static double DetermineThreshold(Image<Gray, byte> img)
+        {
+            double threshhold = 0;
+            Mat hist = new Mat();
+            
+            using (VectorOfMat vm = new VectorOfMat())
+            {
+                vm.Push(img.Mat);
+                float[] ranges = new float[] { 0.0f, 256.0f };
+                CvInvoke.CalcHist(vm, new int[] { 0 }, null, hist, new int[] { 256 }, ranges, false);
+            }
+            while (Math.Abs(hist.GetValue(0, (int)threshhold + 1) - (hist.GetValue(0, (int)threshhold))) > 1000)
+            {
+                threshhold += 1;
+            }
+            return threshhold;
+        }
     }
 }
